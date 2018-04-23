@@ -1,5 +1,6 @@
 package com.codeko.spring5reactive.controllers;
 
+import com.codeko.spring5reactive.exceptions.PostNotFoundException;
 import com.codeko.spring5reactive.models.Post;
 import com.codeko.spring5reactive.repositories.PostRepository;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,8 @@ public class PostController {
 
     @GetMapping("/{id}")
     public Mono<Post> getPostById(@PathVariable String id) {
-        return this.postRepository.findById(id);
+        return this.postRepository.findById(id)
+                .switchIfEmpty(Mono.error(new PostNotFoundException(id)));
     }
 
     @PutMapping("/{id}")
